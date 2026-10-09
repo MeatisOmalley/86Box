@@ -1,6 +1,6 @@
 # 86craft: late-1989 386DX hardware target
 
-Research date: 2026-10-08. Status: source-verified recommendation, not a boot-tested VM or a measured FPS result. No game port or emulator behavior changes accompany this document.
+Research date: 2026-10-08; VGA target updated by user decision 2026-10-09. Status: source-verified recommendation, not a boot-tested VM or a measured FPS result. No game port or emulator behavior changes accompany this document.
 
 ## Repository
 
@@ -23,7 +23,7 @@ Scope: the Everex-class 386DX/33 discussed for this project, using hardware fami
 | Motherboard | `[SiS 310] ASUS ISA-386C` (`asus386`) | Supported ISA 386 board family that ASUS dates to 1989. A functional proxy, **not an emulated Everex Step motherboard**. |
 | RAM | 16 MB / 16384 KB | Defensible high-end Everex-class capacity. Ignore the emulator profile's larger 64 MB ceiling; it does not establish 1989 availability. |
 | FPU | Intel 80387, select `387` | Separate floating-point coprocessor, nominally matching the 33 MHz CPU. Supported by the CPU profile. |
-| Video | `Video 7 VGA 1024i (HT208)` (`v7_vga_1024i`), 512 KB | Period 16-bit ISA VGA/SVGA family; use its maximum documented memory option. Provisional choice, not a measured winner over other period VGA cards. |
+| Video | `Tseng Labs ET4000AX (ISA)` (`et4000ax`), 1 MB | User-selected original ET4000 ISA target, accepting Q4 1989 batches. Not ET4000/W32, VLB or PCI. The 1 MB development configuration and later emulator BIOS are not a verified reconstruction of a particular first-batch retail board; no measured FPS advantage is claimed. |
 | HDD controller | `WD1007V-SE1 (ESDI)` (`esdi_at`) | Documented in 1989 and implemented by 86Box. Use a separate AT floppy controller; the SE1 is HDD-only. |
 | HDD | `[ESDI] CDC 94186-383 (Wren V 383M)` (`CDC94186383`) timing model | Large period drive with an implemented timing profile; use actual disk timings, not the RAM Disk profile. The 383 MB label is **unformatted**, not filesystem capacity. |
 | Sound | `Sound Blaster v1.0` (`sb`), port `0x220`, IRQ 7, DMA 1; early DSP 1.03 | Original late-1989 card, not SB Pro/16. OPL2 music, 8-bit mono PCM; 86Box's SB1 model also enables CMS sound. |
@@ -40,7 +40,7 @@ BYTE's Fall 1989 IBM special edition tested the Everex Step 386/33 with a 33 MHz
 
 [ASUS's own history](https://www.asus.com/microsite/mb/asusmb1st/index.aspx) identifies ISA-386C as its 1989 motherboard. However, the currently available 86Box ROM `machines/asus386/ASUS_ISA-386C_BIOS.bin` has the reset-vector date **05/05/91**. The alternate ASUS 386/33-64K ROM is dated **04/30/90**. Neither ROM is proven 1989 firmware.
 
-A [Video Seven advertisement in BYTE, December 1989](https://www.worldradiohistory.com/Archive-Byte/80s/Byte-1989-12.pdf) documents VGA 1024i and its 256/512 KB options. The supported v2.19 ROM contains **01/18/90**. Later HP/OEM BIOS revisions are not evidence of period correctness. The original Sound Blaster is dated to 1989 by [Creative's history](https://us.creative.com/soundblaster/ourstory/) and its [tenth-anniversary announcement](https://sg.creative.com/corporate/pressroom?id=6199), which places launch at Fall COMDEX 1989.
+The provisional Video 7 choice was superseded on 2026-10-09 by the user's acceptance of Q4 1989 ET4000 ISA batches. The [Tseng manufacturer databook](https://ardent-tool.com/datasheets/Tseng_ET4000_Databook_1990.pdf) describes the original controller. 86Box implements `et4000ax` independently of the later W32/local-bus variants. Its standard `ET4000_V8_06.BIN` identifies **04/15/92 V8.06X** (SHA-256 `db2f8461274922026acc8b2a4fe1b0675d8ce7d6430108b74196527f36ed2c09`); `ET4000.BIN` identifies **04/07/93 V8.01X**. The DOS scaffold pins V8.06X as a firmware proxy. Neither is original 1989 firmware. Use indexed 256-color VGA, not later high-color RAMDAC features; exact first-batch board/RAM provenance remains unresolved. The original Sound Blaster is dated to 1989 by [Creative's history](https://us.creative.com/soundblaster/ourstory/) and its [tenth-anniversary announcement](https://sg.creative.com/corporate/pressroom?id=6199), which places launch at Fall COMDEX 1989.
 
 The [Western Digital installation guide](https://www.scribd.com/document/741751007/WD1007V) is dated 1989. The [CDC Wren V brochure](https://bitsavers.trailing-edge.com/pdf/cdc/discs/brochures/CDC_Wren_V_Brochure_Jan88.pdf) predates the cutoff and lists the 94186-383. Match image geometry to the actual model rather than interpreting its unformatted name as a 383 MB image-size requirement.
 
@@ -52,11 +52,11 @@ At the pinned upstream revision:
 
 - [Machine table](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/machine/machine_table.c): ISA-386C accepts a 386DX at 33 MHz and 16 MB RAM; no Everex machine entry was found.
 - [CPU/FPU table](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/cpu/cpu_table.c): Intel i386DX 33 MHz references the FPU list containing `387`.
-- [Video device](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/video/vid_ht216.c): VGA 1024i supports 256/512 KB and the selectable BIOS revisions.
+- [Video device](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/video/vid_et4000.c): ISA ET4000AX supports 256/512/1024 KB and selectable BIOS revisions; the same selection is supported by the pinned v6.0 release.
 - [Audio device](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/sound/snd_sb.c): original SB1, selectable DSP versions and port/IRQ settings. Preserve the early DSP; do not select the offered DSP 2.00 upgrade for this target.
 - [ESDI controller](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/disk/hdc_esdi_at.c) and [drive profiles](https://github.com/86Box/86Box/blob/f60098841542e2e4abca4197e7343dc356523716/src/disk/hdd.c): WD1007V-SE1 and CDC94186383 are implemented.
 
-Required ROM paths are defined in `src/machine/m_at_386dx.c`, `src/video/vid_ht216.c`, and `src/disk/hdc_esdi_at.c`. ROM availability alone does not constitute a successful POST or operating-system test.
+Required ROM paths are defined in `src/machine/m_at_386dx.c`, `src/video/vid_et4000.c`, and `src/disk/hdc_esdi_at.c`. ROM availability alone does not constitute a successful POST or operating-system test. The Everex-class 386DX/33 remains primary; a 486DX/25 is reserved as a separate comparison target, not a baseline replacement.
 
 ## Coprocessor implications
 
