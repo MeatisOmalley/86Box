@@ -2419,7 +2419,7 @@ const cpu_family_t cpu_families[] = {
                 .mem_write_cycles   = 6,
                 .cache_read_cycles  = 3,
                 .cache_write_cycles = 3,
-                .atclk_div          = 4
+                .atclk_div          = 3
             },
             {
                 .name               = "50",
