@@ -2422,6 +2422,23 @@ const cpu_family_t cpu_families[] = {
                 .atclk_div          = 3
             },
             {
+                .name               = "40 (overclock)",
+                .cpu_type           = CPU_i486DX,
+                .fpus               = fpus_internal,
+                .rspeed             = 40000000,
+                .multi              = 1,
+                .voltage            = 5000,
+                .edx_reset          = 0x404,
+                .cpuid_model        = 0,
+                .cyrix_id           = 0,
+                .cpu_flags          = CPU_SUPPORTS_DYNAREC,
+                .mem_read_cycles    = 7,
+                .mem_write_cycles   = 7,
+                .cache_read_cycles  = 3,
+                .cache_write_cycles = 3,
+                .atclk_div          = 4
+            },
+            {
                 .name               = "50",
                 .cpu_type           = CPU_i486DX,
                 .fpus               = fpus_internal,
