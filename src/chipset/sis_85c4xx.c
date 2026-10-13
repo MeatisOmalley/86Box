@@ -585,6 +585,10 @@ sis_85c4xx_out(uint16_t port, uint8_t val, void *priv)
             break;
         case 0x23:
             if ((dev->cur_reg >= dev->reg_base) && (dev->cur_reg <= dev->reg_last)) {
+                /* This private June 1990 build represents installed external
+                   SRAM on the ASUS ISA-486; the inherited CMOS has it off. */
+                if ((rel_reg == 0x01) && (machines[machine].init == machine_at_isa486_init))
+                    val |= 0x84;
                 valxor = val ^ dev->regs[rel_reg];
 
                 if (!dev->is_471 && (rel_reg == 0x00))
@@ -834,6 +838,10 @@ sis_85c4xx_reset(void *priv)
     dev->scratch[0] = dev->scratch[1] = 0xff;
 
     cpu_cache_ext_enabled = 0;
+    if (machines[machine].init == machine_at_isa486_init) {
+        dev->regs[0x01] |= 0x84;
+        cpu_cache_ext_enabled = 1;
+    }
     cpu_update_waitstates();
 
     dev->force_flush = 1;
