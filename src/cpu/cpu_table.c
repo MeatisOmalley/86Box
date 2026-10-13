@@ -2558,6 +2558,23 @@ const cpu_family_t cpu_families[] = {
                 .cache_write_cycles = 6,
                 .atclk_div          = 8
             },
+            {
+                .name               = "80 (40 MHz bus OC)",
+                .cpu_type           = CPU_i486DX,
+                .fpus               = fpus_internal,
+                .rspeed             = 80000000,
+                .multi              = 2,
+                .voltage            = 5000,
+                .edx_reset          = 0x433,
+                .cpuid_model        = 0,
+                .cyrix_id           = 0,
+                .cpu_flags          = CPU_SUPPORTS_DYNAREC,
+                .mem_read_cycles    = 14,
+                .mem_write_cycles   = 14,
+                .cache_read_cycles  = 6,
+                .cache_write_cycles = 6,
+                .atclk_div          = 10
+            },
             { .name = "", 0 }
         }
     },
